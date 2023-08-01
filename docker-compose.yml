@@ -1,0 +1,22 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: test3
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  server:
+    build: ./server
+    command: npm run dev
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+   
