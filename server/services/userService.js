@@ -236,11 +236,12 @@ function distributePlayers(players) {
       console.log("No suitable team found for player", player.username);
     }
   }
-
-  // Return the teams in a format suitable for the front-end
-  return teams.map((team) =>
+  const x = teams.map((team) =>
     team.map((player) => ({ username: player.username }))
   );
+
+  // Return the teams in a format suitable for the front-end
+  return x;
 }
 
 module.exports = {
