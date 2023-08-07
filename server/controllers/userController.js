@@ -71,4 +71,15 @@ router.get("/rankings/:username", async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 });
+router.get("/get-teams", async (req, res) => {
+  try {
+    const teams = await userService.getBalancedTeams();
+    console.log("\n teams", teams, "\n");
+
+    res.status(200).json({ success: true, teams });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 module.exports = router;
