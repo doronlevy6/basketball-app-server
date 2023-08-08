@@ -2,8 +2,6 @@ const pool = require("../models/userModel");
 
 const createUser = async (username, password, email) => {
   try {
-    console.log("\n xxx", username, "\n");
-
     const result = await pool.query(
       "INSERT INTO users (username, password, email) VALUES ($1, $2, $3) RETURNING *",
       [username, password, email]
@@ -135,11 +133,10 @@ const getBalancedTeams = async () => {
     validPlayers.sort(
       (a, b) => computeTotalRanking(b) - computeTotalRanking(a)
     );
-    console.log("\n validPlayers", validPlayers, "\n");
 
     // Take the first 12 players
     const top12Players = validPlayers.slice(0, 12);
-
+    const distributedTeams = distributePlayers(top12Players);
     // Distribute the valid players to the teams
     return distributePlayers(top12Players);
   } catch (err) {
@@ -159,27 +156,6 @@ function computeTotalRanking(player) {
   );
 }
 
-// function distributePlayers(players) {
-//   const numTeams = players.length > 8 ? 3 : 2;
-//   const teams = Array.from({ length: numTeams }, () => []);
-
-//   // Iterate through the players and assign them to the teams
-//   for (let i = 0; i < players.length; i++) {
-//     const teamIndex = i % numTeams;
-//     if (teams[teamIndex].length < 4) {
-//       teams[teamIndex].push(players[i]);
-//     } else {
-//       // If a team has reached the maximum size, add the player to the next available team
-//       const nextAvailableTeam = teams.find((team) => team.length < 4);
-//       nextAvailableTeam.push(players[i]);
-//     }
-//   }
-
-//   // Return the teams in a format suitable for the front-end
-//   return teams.map((team) =>
-//     team.map((player) => ({ username: player.username }))
-//   );
-// }
 function distributePlayers(players) {
   const numTeams = players.length === 12 ? 3 : 2; // If there are 12 players, create 3 teams; otherwise, create 2 teams
   const teams = Array.from({ length: numTeams }, () => []);
@@ -236,12 +212,7 @@ function distributePlayers(players) {
       console.log("No suitable team found for player", player.username);
     }
   }
-  const x = teams.map((team) =>
-    team.map((player) => ({ username: player.username }))
-  );
-
-  // Return the teams in a format suitable for the front-end
-  return x;
+  return teams;
 }
 
 module.exports = {
