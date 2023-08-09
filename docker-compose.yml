@@ -9,6 +9,7 @@ services:
       POSTGRES_DB: test3
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data # Named volume
   server:
     build: ./server
     command: npm run dev
@@ -19,4 +20,6 @@ services:
     volumes:
       - ./server:/usr/src/app
       - /usr/src/app/node_modules
-   
+
+volumes:
+  pgdata: # Define named volume here
