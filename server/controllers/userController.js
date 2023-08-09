@@ -74,7 +74,6 @@ router.get("/rankings/:username", async (req, res) => {
 router.get("/get-teams", async (req, res) => {
   try {
     const teams = await userService.getBalancedTeams();
-    console.log("\n teams", teams, "\n");
 
     res.status(200).json({ success: true, teams });
   } catch (err) {
@@ -106,6 +105,25 @@ router.get("/enlist", async (req, res) => {
     console.log("\n usernames", usernames, "\n");
 
     res.status(200).json({ success: true, usernames });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+router.post("/delete-enlist", async (req, res) => {
+  try {
+    const usernames = req.body.usernames;
+    await userService.deleteEnlistedUsers(usernames);
+    res.status(200).json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+router.post("/enlist-users", async (req, res) => {
+  try {
+    const usernames = req.body.usernames;
+
+    await userService.enlistUsersBox(usernames);
+    res.status(200).json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

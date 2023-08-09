@@ -158,6 +158,8 @@ function computeTotalRanking(player) {
 }
 
 function distributePlayers(players) {
+  console.log("\n players.length", players.length, "\n");
+
   const numTeams = players.length === 12 ? 3 : 2; // If there are 12 players, create 3 teams; otherwise, create 2 teams
   const teams = Array.from({ length: numTeams }, () => []);
 
@@ -213,6 +215,7 @@ function distributePlayers(players) {
       console.log("No suitable team found for player", player.username);
     }
   }
+
   return teams;
 }
 
@@ -239,6 +242,31 @@ const getAllEnlistedUsers = async () => {
     throw new Error("Failed to fetch enlisted users");
   }
 };
+const deleteEnlistedUsers = async (usernames) => {
+  try {
+    await pool.query(
+      "DELETE FROM next_game_enlistment WHERE username = ANY($1::text[])",
+      [usernames]
+    );
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to delete enlisted users");
+  }
+};
+const enlistUsersBox = async (usernames) => {
+  try {
+    for (const username of usernames) {
+      await pool.query(
+        "INSERT INTO next_game_enlistment (username) VALUES ($1)",
+        [username]
+      );
+    }
+    return true; // Return true if all inserts were successful
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to enlist users for next game");
+  }
+};
 module.exports = {
   createUser,
   loginUser,
@@ -249,4 +277,6 @@ module.exports = {
   getBalancedTeams,
   enlistUserForNextGame,
   getAllEnlistedUsers,
+  deleteEnlistedUsers,
+  enlistUsersBox,
 };
