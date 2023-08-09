@@ -82,4 +82,32 @@ router.get("/get-teams", async (req, res) => {
   }
 });
 
+router.post("/enlist", async (req, res) => {
+  const { username } = req.body;
+  console.log("\n username", username, "\n");
+
+  try {
+    const success = await userService.enlistUserForNextGame(username);
+    if (success) {
+      res.status(201).json({ success: true });
+    } else {
+      res
+        .status(500)
+        .json({ success: false, message: "Failed to enlist user" });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+router.get("/enlist", async (req, res) => {
+  try {
+    const usernames = await userService.getAllEnlistedUsers();
+    console.log("\n usernames", usernames, "\n");
+
+    res.status(200).json({ success: true, usernames });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 module.exports = router;

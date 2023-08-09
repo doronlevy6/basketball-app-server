@@ -17,3 +17,9 @@ CREATE TABLE IF NOT EXISTS player_rankings (
     FOREIGN KEY (rated_username) REFERENCES users (username),
     PRIMARY KEY (rater_username, rated_username)
 );
+
+CREATE TABLE IF NOT EXISTS  (
+    username VARCHAR(255) PRIMARY KEY,
+    enlistment_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (username) REFERENCES users (username)
+);

@@ -108,15 +108,16 @@ const getBalancedTeams = async () => {
   try {
     // Fetch all players and their rankings
     const result = await pool.query(
-      `SELECT u.username, AVG(pr.skill_level) as skill_level,
+      `SELECT n.username, AVG(pr.skill_level) as skill_level,
        AVG(pr.scoring_ability) as scoring_ability, AVG(pr.defensive_skills) as defensive_skills,
         AVG(pr.speed_and_agility) as speed_and_agility, AVG(pr.shooting_range) as shooting_range,
          AVG(pr.rebound_skills) as rebound_skills
-       FROM users u
-       LEFT JOIN player_rankings pr ON u.username = pr.rated_username
-       GROUP BY u.username`
+       FROM next_game_enlistment n
+       LEFT JOIN player_rankings pr ON n.username = pr.rated_username
+       GROUP BY n.username`
     );
     const players = result.rows;
+    console.log("\n players", players, "\n");
 
     // Filter out players with null parameters
     const validPlayers = players.filter(
@@ -215,6 +216,29 @@ function distributePlayers(players) {
   return teams;
 }
 
+const enlistUserForNextGame = async (username) => {
+  try {
+    const result = await pool.query(
+      "INSERT INTO next_game_enlistment (username) VALUES ($1)",
+      [username]
+    );
+    return result.rowCount > 0; // Return true if the insert was successful
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to enlist user for next game");
+  }
+};
+const getAllEnlistedUsers = async () => {
+  try {
+    const result = await pool.query(
+      "SELECT username FROM next_game_enlistment"
+    );
+    return result.rows.map((row) => row.username); // Return an array of usernames
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to fetch enlisted users");
+  }
+};
 module.exports = {
   createUser,
   loginUser,
@@ -223,4 +247,6 @@ module.exports = {
   getPlayerRankings,
   getPlayerRankingsByRater,
   getBalancedTeams,
+  enlistUserForNextGame,
+  getAllEnlistedUsers,
 };
