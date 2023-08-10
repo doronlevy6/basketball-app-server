@@ -18,8 +18,13 @@ CREATE TABLE IF NOT EXISTS player_rankings (
     PRIMARY KEY (rater_username, rated_username)
 );
 
-CREATE TABLE IF NOT EXISTS  (
+CREATE TABLE IF NOT EXISTS next_game_enlistment (
     username VARCHAR(255) PRIMARY KEY,
     enlistment_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (username) REFERENCES users (username)
+);
+
+CREATE TABLE IF NOT EXISTS game_teams (
+    game_id SERIAL PRIMARY KEY,
+    teams JSON NOT NULL
 );

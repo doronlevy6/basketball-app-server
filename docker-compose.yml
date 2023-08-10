@@ -22,4 +22,14 @@ services:
       - /usr/src/app/node_modules
 
 volumes:
-  pgdata: # Define named volume here
+  pgdata:
+    # Define named volume here
+
+
+    ########
+    #docker-compose down
+
+    #docker volume ls
+    #docker volume rm <volume_name>
+    #docker-compose up --build
+

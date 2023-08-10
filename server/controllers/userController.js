@@ -1,6 +1,9 @@
+//server\controllers\userController.js:
+
 const express = require("express");
 const router = express.Router();
 const userService = require("../services/userService");
+const balancedTeamsService = require("../services/balancedTeamsService");
 
 router.post("/register", async (req, res) => {
   const { username, password, email } = req.body;
@@ -71,29 +74,11 @@ router.get("/rankings/:username", async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 });
-router.get("/get-teams", async (req, res) => {
+router.get("/set-teams", async (req, res) => {
   try {
-    const teams = await userService.getBalancedTeams();
+    const teams = await balancedTeamsService.setBalancedTeams();
 
     res.status(200).json({ success: true, teams });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
-
-router.post("/enlist", async (req, res) => {
-  const { username } = req.body;
-  console.log("\n username", username, "\n");
-
-  try {
-    const success = await userService.enlistUserForNextGame(username);
-    if (success) {
-      res.status(201).json({ success: true });
-    } else {
-      res
-        .status(500)
-        .json({ success: false, message: "Failed to enlist user" });
-    }
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -102,7 +87,6 @@ router.post("/enlist", async (req, res) => {
 router.get("/enlist", async (req, res) => {
   try {
     const usernames = await userService.getAllEnlistedUsers();
-    console.log("\n usernames", usernames, "\n");
 
     res.status(200).json({ success: true, usernames });
   } catch (err) {
@@ -113,6 +97,7 @@ router.post("/delete-enlist", async (req, res) => {
   try {
     const usernames = req.body.usernames;
     await userService.deleteEnlistedUsers(usernames);
+    await balancedTeamsService.setBalancedTeams();
     res.status(200).json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -123,9 +108,22 @@ router.post("/enlist-users", async (req, res) => {
     const usernames = req.body.usernames;
 
     await userService.enlistUsersBox(usernames);
+    await balancedTeamsService.setBalancedTeams();
+
     res.status(200).json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 });
+router.get("/get-teams", async (req, res) => {
+  console.log("\n xxx1", "xxx", "\n");
+
+  try {
+    const teams = await userService.getTeams();
+    res.status(200).json({ success: true, teams });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 module.exports = router;
