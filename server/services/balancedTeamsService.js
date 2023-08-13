@@ -1,5 +1,7 @@
+//server\services\balancedTeamsService.js
 const pool = require("../models/userModel");
-const setBalancedTeams = async () => {
+
+const setBalancedTeams = async (io) => {
   try {
     // Fetch all players and their rankings
     const result = await pool.query(
@@ -12,7 +14,6 @@ const setBalancedTeams = async () => {
        GROUP BY n.username`
     );
     const players = result.rows;
-    console.log("\n players", players, "\n");
 
     // Filter out players with null parameters
     const validPlayers = players.filter(
@@ -35,6 +36,7 @@ const setBalancedTeams = async () => {
     const distributedTeams = distributePlayers(top12Players);
     // Distribute the valid players to the teams
     await saveTeamsToDB(distributedTeams);
+    io.emit("teamsUpdated");
 
     return distributedTeams;
   } catch (err) {
