@@ -6,6 +6,10 @@ const userService = require("../services/userService");
 const balancedTeamsService = require("../services/balancedTeamsService");
 const { getIo } = require("../socket");
 
+router.get("/", async (req, res) => {
+  res.send("2000");
+});
+
 router.post("/register", async (req, res) => {
   const { username, password, email } = req.body;
   try {
