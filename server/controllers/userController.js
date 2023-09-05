@@ -49,12 +49,25 @@ router.get("/usernames", async (req, res) => {
 router.post("/rankings", async (req, res) => {
   const { rater_username, rankings } = req.body;
   try {
-    await userService.storePlayerRankings(rater_username, rankings);
+    // Filter out the rankings where not all properties (except username) are numbers between 1 and 10
+    const validRankings = rankings.filter(player => {
+      const attributes = Object.keys(player).filter(key => key !== 'username');
+      return attributes.every(key => 
+        typeof player[key] === 'number' && 
+        !isNaN(player[key]) &&
+        player[key] >= 1 &&
+        player[key] <= 10
+      );
+    });
+
+    await userService.storePlayerRankings(rater_username, validRankings);
     res.status(200).json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 });
+
+
 
 router.get("/all-rankings/:rater_username", async (req, res) => {
   const { rater_username } = req.params;
