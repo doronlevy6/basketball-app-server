@@ -1,10 +1,10 @@
+//server\server.js
 const express = require("express");
 const cors = require("cors");
-const app = express();
 const userRoutes = require("./controllers/userController");
 const http = require("http");
 const { initialize } = require("./socket");
-
+const app = express();
 app.use(cors()); // Enable CORS
 app.use(express.json());
 app.use("/", userRoutes);

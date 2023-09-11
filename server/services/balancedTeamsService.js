@@ -19,8 +19,6 @@ WHERE pr.rater_username IN ('Moshe', 'doron')
 GROUP BY n.username
   `
     );
-    const players = result.rows;
-    console.log('\n\n\n x2',players,'\n\n\n' );
     
     
 
