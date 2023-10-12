@@ -3,6 +3,8 @@ const pool = require("../models/userModel");
 
 
 const setBalancedTeams = async (io, isTierMethod) => {
+  console.log('\n\n\n xxx', "111", '\n\n\n ');
+
 
 
 

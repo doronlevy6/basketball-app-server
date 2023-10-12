@@ -89,12 +89,14 @@ router.get("/rankings/:username", async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 });
-router.get("/set-teams", async (req, res) => {
+router.post("/set-teams", async (req, res) => {
   try {
-    const { usernames, isTierMethod } = req.body;//!
+
+
+    const { isTierMethod } = req.body;//!
     const teams = await balancedTeamsService.setBalancedTeams(getIo(), isTierMethod);
 
-    res.status(200).json({ success: true, teams });
+    res.status(200).json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
